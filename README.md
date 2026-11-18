@@ -1,1 +1,0 @@
-# Snap-vita3k-emulator

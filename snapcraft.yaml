@@ -1,0 +1,58 @@
+name: vita3k-emulator
+base: core26
+adopt-info: vita3k-app
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
+grade: stable
+confinement: strict
+compression: lzo
+icon: org.vita3k.vita3k.svg
+
+apps:
+  vita3k-emulator:
+    command-chain: [force-snap-common-folder]
+    command: Vita3K
+    desktop: org.vita3k.vita3k.desktop
+    common-id: org.vita3k.vita3k
+    extensions: [kde-neon-6]
+    environment:
+      HOME: $SNAP_USER_COMMON
+    plugs:
+      - audio-playback
+      - network
+      - network-bind
+      - screen-inhibit-control
+      - home
+      - removable-media
+      - mount-observe
+      - joystick
+      - bluez
+      - udisks2
+      - system-observe
+      - hardware-observe
+      - upower-observe
+
+plugs:
+  shared-memory:
+    private: true
+
+parts:
+  vita3k-app:
+    plugin: dump
+    source:
+      - on amd64: https://github.com/Vita3K/Vita3K/releases/download/continuous/ubuntu-latest.zip
+      - on arm64: https://github.com/Vita3K/Vita3K/releases/download/continuous/ubuntu-aarch64-latest.zip
+    parse-info: [org.vita3k.vita3k.metainfo.xml]
+    override-build: |
+      craftctl default
+      chmod +x $CRAFT_PART_INSTALL/Vita3K
+
+  other-files:
+    after: [vita3k-app]
+    plugin: dump
+    source: ./other-files
